@@ -4,6 +4,13 @@
 
 ![游戏库](docs/screenshot-library.png)
 
+![外观页（日间主题）](docs/screenshot-light-appearance.png)
+
+## 文档
+
+- [开发文档](docs/DEVELOPMENT.md) —— 架构、关键设计、踩坑记录
+- [IRON NEST MOD 原理](docs/IRON-NEST-MOD-原理.md) —— MelonLoader MOD 开发原理（骨架 / IL2CPP 铁律 / 热重载架构 / 游戏数据速查）
+
 ## 功能
 
 | 页面 | 功能 |

@@ -1,5 +1,7 @@
 # 开发文档
 
+> 相关文档：[IRON NEST MOD 原理](IRON-NEST-MOD-原理.md)（MelonLoader MOD 开发：骨架 / 构建 / IL2CPP 铁律 / 热重载架构 / 游戏数据速查）
+
 ## 架构
 
 ```
