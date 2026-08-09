@@ -1,0 +1,34 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore MelonModifier.sln
+
+      - name: Build (Release)
+        run: dotnet build MelonModifier.sln -c Release --no-restore
+
+      - name: Publish (win-x64, framework-dependent)
+        run: dotnet publish src/MelonModifier.App/MelonModifier.App.csproj -c Release -r win-x64 --self-contained false --no-restore -o publish/MelonModifier
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MelonModifier-win-x64
+          path: publish/MelonModifier

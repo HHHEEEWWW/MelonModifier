@@ -1,5 +1,7 @@
 # MelonModifier
 
+[English](README.en.md) | 中文
+
 **MelonLoader 本地 GUI 管理器** —— 为 Unity 游戏安装、升级、卸载 [MelonLoader](https://github.com/LavaGang/MelonLoader)（Il2Cpp / Mono），管理本地 Mods 与 Plugins，查看运行日志与 `Loader.cfg` 配置。
 
 ![游戏库](docs/screenshot-library.png)
