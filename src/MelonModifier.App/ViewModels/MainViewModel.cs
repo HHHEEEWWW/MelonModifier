@@ -31,6 +31,16 @@ public sealed partial class MainViewModel : ObservableObject
             new() { Title = "关于", Icon = "\uE946", View = new Views.AboutView() },
         };
 
+        foreach (var page in Pages)
+        {
+            var p = page;
+            p.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(NavPage.IsSelected) && p.IsSelected)
+                    SelectedPage = p;
+            };
+        }
+
         SelectedPage = Pages[0];
         Pages[0].IsSelected = true;
     }

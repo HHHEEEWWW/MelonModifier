@@ -41,6 +41,7 @@
     <SolidColorBrush x:Key="Brush.TextSecondary" Color="{StaticResource Color.TextSecondary}" />
     <SolidColorBrush x:Key="Brush.TextDim" Color="{StaticResource Color.TextDim}" />
     <SolidColorBrush x:Key="Brush.BorderLine" Color="{StaticResource Color.BorderLine}" />
+    <SolidColorBrush x:Key="Brush.BorderGlow" Color="{StaticResource Color.BorderGlow}" />
 
     <!-- 窗口背景渐变 -->
     <LinearGradientBrush x:Key="Brush.WindowBg" StartPoint="0,0" EndPoint="1,1">

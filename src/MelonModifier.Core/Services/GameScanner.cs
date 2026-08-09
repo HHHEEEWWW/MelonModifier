@@ -137,7 +137,7 @@ public sealed class GameScanner
                         var v = info.FileVersion;
                         if (!string.IsNullOrWhiteSpace(v))
                         {
-                            game.InstalledVersion = "v" + v;
+                            game.InstalledVersion = v.StartsWith("v", StringComparison.OrdinalIgnoreCase) ? v : "v" + v;
                             break;
                         }
                     }

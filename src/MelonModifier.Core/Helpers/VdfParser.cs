@@ -17,8 +17,21 @@ public static class VdfParser
         int pos = 0;
         try
         {
-            var result = ParseNode(text, ref pos);
-            return result as Dictionary<string, object>;
+            var result = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            while (true)
+            {
+                SkipWs(text, ref pos);
+                if (pos >= text.Length)
+                    break;
+
+                // VDF 顶层形如 "key" { ... }：先读 key，再进入花括号节点
+                var key = ReadKey(text, ref pos);
+                SkipWs(text, ref pos);
+                if (pos >= text.Length || text[pos] != '{')
+                    throw new FormatException("expected '{' after top-level key");
+                result[key] = ParseNode(text, ref pos);
+            }
+            return result;
         }
         catch
         {

@@ -19,12 +19,18 @@ public partial class MainWindow : Window
         // 此时资源字典未完全就绪，模板 TemplateBinding 可能取到 UnsetValue。
         DataContext = new MainViewModel();
 
-        // 页面切换动画：淡入 + 轻微上移
+        // 页面切换：手动设置 Content（避免 XAML 绑定在窗口渲染期才求值，
+        // 与模板加载交错导致 TemplateBinding 取到 UnsetValue）
         var vm = (MainViewModel)DataContext;
+        PageHost.Content = vm.SelectedPage.View;
+
         vm.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(MainViewModel.SelectedPage))
+            {
+                PageHost.Content = vm.SelectedPage.View;
                 AnimatePageIn();
+            }
         };
     }
 

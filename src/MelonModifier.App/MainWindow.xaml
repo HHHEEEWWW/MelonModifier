@@ -107,7 +107,7 @@
 
                 <!-- 页面宿主（带切换动画） -->
                 <Grid Grid.Row="1">
-                    <ContentControl x:Name="PageHost" Content="{Binding SelectedPage.View}" />
+                    <ContentControl x:Name="PageHost" />
                 </Grid>
             </Grid>
         </Grid>
