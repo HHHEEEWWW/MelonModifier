@@ -4,6 +4,8 @@
 
 ![游戏库](docs/screenshot-library.png)
 
+![Mods 管理](docs/screenshot-mods.png)
+
 ![外观页（日间主题）](docs/screenshot-light-appearance.png)
 
 ## 文档
@@ -30,6 +32,8 @@
 - 科幻 HUD 界面：深色霓虹主题（自定义控件模板，无第三方 UI 库）
 
 ## 快速开始
+
+Windows 下双击根目录 `启动管理器.bat`（找不到程序时自动编译并启动）；或手动：
 
 ```bash
 dotnet build MelonModifier.sln

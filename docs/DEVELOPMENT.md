@@ -15,11 +15,12 @@ src/
 │       ├── ModService.cs        # Mods/Plugins 列表、启停（.disabled）、安装、删除
 │       ├── LogService.cs        # 读取 MelonLoader/Logs
 │       ├── ConfigService.cs     # Loader.cfg 全文读写（保留注释）
+│       ├── SettingsService.cs   # 外观设置持久化（%AppData%/MelonModifier/settings.json）
 │       └── GameRegistry.cs      # 手动添加游戏的持久化（%AppData%/MelonModifier/games.json）
 └── MelonModifier.App/           # WPF
-    ├── Themes/                  # Palette.xaml（色板）+ Controls.xaml（控件模板）
-    ├── ViewModels/              # AppState（共享状态+服务实例）/ MainViewModel / 各页 VM
-    ├── Views/                   # 游戏库 / Mods / 日志 / 配置 / 关于
+    ├── Themes/                  # Dark.xaml / Light.xaml（主题色板）+ Typography.xaml（字体）+ Controls.xaml（控件模板）
+    ├── ViewModels/              # AppState（共享状态+服务实例）/ MainViewModel / 各页 VM（含 AppearanceViewModel）
+    ├── Views/                   # 游戏库 / Mods / 日志 / 配置 / 外观 / 关于
     └── Converters/              # 布尔/状态 → Visibility/Brush 等转换器
 ```
 
@@ -44,6 +45,18 @@ src/
    用 `grep` 核对所有 `{StaticResource X}` 引用都有定义。
 4. 无 GPU / 远程桌面环境：`RenderOptions.ProcessRenderMode = SoftwareOnly`（App.OnStartup）。
 5. .NET 9 有 WPF 资源引用回归（dotnet/wpf#9354），本项目钉在 **net8.0-windows**。
+
+### 外观（主题 / 字体 / 缩放）要点
+- 主题资源拆为 `Dark.xaml` / `Light.xaml`（色板）+ `Typography.xaml`（字体族）；全界面 142 处颜色/字体引用
+  已批量改为 `{DynamicResource ...}`（模板内引用也必须 DynamicResource，StaticResource 延迟解析会崩）。
+- **主题切换不能改 `App.Resources.MergedDictionaries` 列表**（RemoveAt/Add 会破坏其它字典的
+  deferred StaticResource 引用表，后续首次加载的模板崩）。正确做法：把主题字典的每个 key
+  `foreach (var k in theme.Keys) Resources[k] = theme[k];` 覆盖到 `App.Resources` 根字典，DynamicResource 自动刷新。
+- 运行时加载字典必须用 pack URI：`new Uri("pack://application:,,,/Themes/Dark.xaml", UriKind.Absolute)`
+  （相对 URI 按 CWD 解析失败）；`Resources["ThemeDictionary"]` 取不到 x:Name 的字典（用编译生成的实例字段）。
+- 字号缩放：主窗口根 Grid 挂 `LayoutTransform` 的 `ScaleTransform`，绑定 `FontScale`（0.85~1.3）。
+- 设置持久化：`SettingsService` 读写 `%AppData%\MelonModifier\settings.json`，启动时 `ApplyTheme/ApplyFont`。
+- 完整 WPF 主题踩坑清单见记忆 [[wpf-theme-switching-pitfalls]]。
 
 ### Steam 扫描
 - 注册表 `HKCU\Software\Valve\Steam\SteamPath` → `steamapps/libraryfolders.vdf`（多库）→ `appmanifest_*.acf`。
