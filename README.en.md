@@ -1,6 +1,6 @@
 # MelonModifier
 
-**Local GUI manager for MelonLoader** — install, upgrade, and uninstall [MelonLoader](https://github.com/LavaGang/MelonLoader) (Il2Cpp / Mono) for Unity games, manage local Mods & Plugins, view run logs and edit `Loader.cfg` — all in a sci-fi HUD interface.
+**Local GUI manager for Unity games** — install, upgrade, and uninstall [MelonLoader](https://github.com/LavaGang/MelonLoader) and [BepInEx](https://github.com/BepInEx/BepInEx) (Il2Cpp / Mono) for Unity games, manage local Mods & Plugins, view run logs and edit `Loader.cfg` — all in a sci-fi HUD interface.
 
 [中文说明](README.md) | English
 
@@ -14,11 +14,12 @@
 
 | Page | Description |
 |------|-------------|
-| **Game Library** | Scan Steam library for Unity games, add folders manually, one-click install / upgrade / uninstall MelonLoader, engine & version detection (offline detection + GitHub latest comparison) |
+| **Game Library** | Scan Steam library for Unity games, add folders manually, one-click install / upgrade / uninstall **MelonLoader** or **BepInEx** (auto-picks package by engine), engine & version detection (offline detection + GitHub latest comparison, fixed-version fallback on API rate limit) |
 | **Mods** | Browse `Mods/` and `Plugins/`, toggle enable/disable (`.disabled` suffix), delete, drag-and-drop install |
 | **Logs** | View run logs under the game's `MelonLoader/Logs/` (crash troubleshooting) |
 | **Config** | Edit `UserData/Loader.cfg` (full-text mode, preserves comments & unknown keys) |
 | **Appearance** | Theme switching (Dark/Light), font family, UI scaling (85%~130%), auto-saved settings |
+| **Compatibility** | 41 popular Unity games with recommended mod framework (engine type + framework + ecosystem notes) |
 | **About** | Version & upstream info |
 
 ## Tech Stack

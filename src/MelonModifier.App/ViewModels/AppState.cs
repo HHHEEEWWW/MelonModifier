@@ -13,6 +13,7 @@ public sealed partial class AppState : ObservableObject
 {
     public GameScanner Scanner { get; } = new();
     public MelonLoaderService LoaderService { get; } = new();
+    public BepInExService BepInExService { get; } = new();
     public ModService ModService { get; } = new();
     public LogService LogService { get; } = new();
     public ConfigService ConfigService { get; } = new();

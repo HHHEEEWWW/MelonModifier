@@ -272,6 +272,94 @@ public sealed partial class GameLibraryViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task InstallBepInExAsync(GameInfo? game)
+    {
+        if (game is null || IsInstalling)
+            return;
+
+        var confirm = MessageBox.Show(
+            $"安装 BepInEx（{game.EngineLabel} 版）到 {game.Name}？\nMono 使用稳定版 v5.4.x，Il2Cpp 使用 v6.0.0-pre 专用包。",
+            "BepInEx 安装", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (confirm != MessageBoxResult.Yes)
+            return;
+
+        IsInstalling = true;
+        ShowProgress = true;
+        ProgressValue = 0;
+        _state.NotifyStatus($"正在安装 BepInEx → {game.Name} …");
+        try
+        {
+            var progress = new Progress<string>(s =>
+            {
+                ProgressText = s;
+                if (s.Contains('%'))
+                {
+                    var idx = s.LastIndexOf('%');
+                    if (double.TryParse(s.AsSpan(0, idx).Trim(), out var pct))
+                        ProgressValue = pct;
+                }
+            });
+
+            await _state.BepInExService.InstallAsync(game, progress);
+
+            _state.NotifyStatus($"BepInEx {game.BepInExVersion} 已安装到 {game.Name}");
+            ProgressText = "安装完成";
+            ProgressValue = 100;
+
+            RefreshGame(game);
+            _state.Registry.SaveAll(Games);
+            _state.RequestRefresh();
+        }
+        catch (Exception ex)
+        {
+            _state.NotifyStatus("BepInEx 安装失败");
+            MessageBox.Show($"BepInEx 安装失败：\n{ex.Message}", "MelonModifier",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsInstalling = false;
+            ShowProgress = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task UninstallBepInExAsync(GameInfo? game)
+    {
+        if (game is null || IsInstalling)
+            return;
+
+        var r = MessageBox.Show(
+            $"确认卸载 {game.Name} 中的 BepInEx？\n（BepInEx/ 目录内的 Mod 会一并删除）",
+            "卸载确认", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (r != MessageBoxResult.Yes)
+            return;
+
+        IsInstalling = true;
+        ShowProgress = true;
+        ProgressValue = 0;
+        ProgressText = "正在卸载 BepInEx ...";
+        try
+        {
+            await Task.Run(() => _state.BepInExService.UninstallAsync(game));
+            RefreshGame(game);
+            _state.Registry.SaveAll(Games);
+            _state.NotifyStatus($"已卸载 BepInEx：{game.Name}");
+            ProgressText = "卸载完成";
+            ProgressValue = 100;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"卸载失败：{ex.Message}", "MelonModifier", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsInstalling = false;
+            ShowProgress = false;
+        }
+    }
+
+    [RelayCommand]
     private void OpenGameFolder(GameInfo? game)
     {
         if (game is null || !Directory.Exists(game.Path))

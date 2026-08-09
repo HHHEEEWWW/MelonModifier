@@ -2,7 +2,7 @@
 
 [English](README.en.md) | 中文
 
-**MelonLoader 本地 GUI 管理器** —— 为 Unity 游戏安装、升级、卸载 [MelonLoader](https://github.com/LavaGang/MelonLoader)（Il2Cpp / Mono），管理本地 Mods 与 Plugins，查看运行日志与 `Loader.cfg` 配置。
+**Unity 游戏本地 Mod 管理器** —— 为 Unity 游戏安装、升级、卸载 [MelonLoader](https://github.com/LavaGang/MelonLoader) 与 [BepInEx](https://github.com/BepInEx/BepInEx)（Il2Cpp / Mono），管理本地 Mods 与 Plugins，查看运行日志与 `Loader.cfg` 配置。
 
 ![游戏库](docs/screenshot-library.png)
 
@@ -19,12 +19,21 @@
 
 | 页面 | 功能 |
 |------|------|
-| **游戏库** | 扫描 Steam 库中的 Unity 游戏、手动添加目录、一键安装 / 升级 / 卸载 MelonLoader、引擎与版本状态检测（支持离线检测 + GitHub 最新版本比对） |
+| **游戏库** | 扫描 Steam 库中的 Unity 游戏、手动添加目录、一键安装 / 升级 / 卸载 **MelonLoader** 或 **BepInEx**（按引擎自动选包）、引擎与版本状态检测（支持离线检测 + GitHub 最新版本比对，API 限流时自动回退固定版本） |
 | **Mods** | 浏览 `Mods/` 与 `Plugins/` 中的 DLL，启停切换（`.disabled` 后缀）、删除、拖拽安装 |
 | **日志** | 查看游戏 `MelonLoader/Logs/` 下的运行日志（崩溃排查） |
 | **配置** | 编辑 `UserData/Loader.cfg`（全文模式，保留注释与未知键） |
 | **外观** | 主题切换（夜间/日间）、字体族、界面缩放（85%~130%），设置自动保存 |
+| **兼容性** | 41 款热门 Unity 游戏的 Mod 框架适配参考（引擎类型 + 推荐框架 + 生态备注） |
 | **关于** | 版本与上游信息 |
+
+## 支持的 Mod 框架
+
+| 框架 | 引擎 | 版本 | 安装方式 |
+|------|------|------|----------|
+| **MelonLoader** | Il2Cpp / Mono | v0.7.x（GitHub latest） | `version.dll` 代理 + `MelonLoader/` 目录 |
+| **BepInEx** | Mono | v5.4.23.5（稳定版） | `winhttp.dll` 代理 + `BepInEx/` 目录 |
+| **BepInEx** | Il2Cpp | v6.0.0-pre.2（专用包，含 `dotnet/` BCL） | 同上（卸载按部署清单精确清理，不误删游戏文件） |
 
 ## 技术栈
 

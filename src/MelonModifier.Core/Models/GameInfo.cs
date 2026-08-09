@@ -45,6 +45,12 @@ public sealed class GameInfo : INotifyPropertyChanged
     /// <summary>已安装的 MelonLoader 版本（无则为 null）。</summary>
     public string? InstalledVersion { get; set; }
 
+    /// <summary>是否已安装 BepInEx（winhttp.dll + BepInEx/core 目录存在）。</summary>
+    public bool HasBepInEx { get; set; }
+
+    /// <summary>已安装的 BepInEx 版本（读取 BepInEx/core/BepInEx.dll 文件版本）。</summary>
+    public string? BepInExVersion { get; set; }
+
     /// <summary>当前最新版本（获取过最新版本信息后才有值）。</summary>
     public string? LatestVersion { get; set; }
 
@@ -114,4 +120,21 @@ public sealed class GameInfo : INotifyPropertyChanged
 
     /// <summary>状态等级：0=未安装，1=已安装，2=可升级（UI 徽章颜色用）。</summary>
     public int StatusKind => !HasMelonLoader ? 0 : IsOutdated ? 2 : 1;
+
+    // ---------- BepInEx（第二 Mod 框架） ----------
+
+    /// <summary>BepInEx 状态徽章文本。</summary>
+    public string BepInExStatusText => !HasBepInEx ? "未安装" : $"已装 {BepInExVersion}";
+
+    /// <summary>BepInEx 状态等级：0=未安装，1=已安装（徽章颜色用）。</summary>
+    public int BepInExStatusKind => HasBepInEx ? 1 : 0;
+
+    /// <summary>BepInEx 安装按钮文本。</summary>
+    public string BepInExButtonText => HasBepInEx ? "BepInEx 已装" : "装 BepInEx";
+
+    /// <summary>是否允许安装 BepInEx（未装时可用；已装禁用）。</summary>
+    public bool CanInstallBepInEx => !HasBepInEx;
+
+    /// <summary>是否允许卸载 BepInEx。</summary>
+    public bool CanUninstallBepInEx => HasBepInEx;
 }

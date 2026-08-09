@@ -59,6 +59,7 @@ public sealed class GameScanner
                     Engine = engine,
                 };
                 DetectMelonLoader(game);
+                DetectBepInEx(game);
                 result.Add(game);
             }
         }
@@ -85,6 +86,7 @@ public sealed class GameScanner
             Engine = engine,
         };
         DetectMelonLoader(game);
+        DetectBepInEx(game);
         return game;
     }
 
@@ -93,6 +95,7 @@ public sealed class GameScanner
     {
         game.Engine = DetectEngine(game.Path);
         DetectMelonLoader(game);
+        DetectBepInEx(game);
     }
 
     /// <summary>检测 Unity 引擎类型。</summary>
@@ -148,6 +151,15 @@ public sealed class GameScanner
                 }
             }
         }
+    }
+
+    /// <summary>检测 BepInEx 是否已安装及其版本（winhttp.dll + core 程序集）。</summary>
+    public static void DetectBepInEx(GameInfo game)
+    {
+        var proxy = Path.Combine(game.Path, "winhttp.dll");
+        game.HasBepInEx = File.Exists(proxy) && BepInExService.FindCoreDll(game.Path) is not null;
+
+        game.BepInExVersion = game.HasBepInEx ? BepInExService.DetectVersion(game.Path) : null;
     }
 
     // ---------- Steam 内部 ----------

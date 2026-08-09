@@ -88,6 +88,8 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
                                     <!-- 名称 + 状态徽章 -->
@@ -103,13 +105,20 @@
                                         </Border>
                                     </Grid>
 
-                                    <!-- 引擎徽章 -->
+                                    <!-- 引擎徽章 + BepInEx 徽章 -->
                                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,0">
                                         <Border Style="{StaticResource Badge}" Background="{DynamicResource Brush.BgActive}">
                                             <TextBlock Text="{Binding EngineLabel}"
                                                        FontSize="11" FontWeight="SemiBold"
                                                        FontFamily="{DynamicResource Font.Mono}"
                                                        Foreground="{DynamicResource Brush.HoloBlue}" />
+                                        </Border>
+                                        <Border Style="{StaticResource Badge}" Background="#2200E676" Margin="6,0,0,0"
+                                                Visibility="{Binding HasBepInEx, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="{Binding BepInExStatusText}"
+                                                       FontSize="11" FontWeight="SemiBold"
+                                                       FontFamily="{DynamicResource Font.Mono}"
+                                                       Foreground="{DynamicResource Brush.Neon}" />
                                         </Border>
                                     </StackPanel>
 
@@ -139,6 +148,18 @@
                                         <Button Style="{StaticResource BtnGhost}" Content="管理" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.SelectGameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}" />
+                                    </StackPanel>
+
+                                    <!-- BepInEx 操作按钮 -->
+                                    <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,8,0,0">
+                                        <Button Style="{StaticResource BtnGhost}" Content="{Binding BepInExButtonText}"
+                                                Command="{Binding DataContext.InstallBepInExCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                IsEnabled="{Binding CanInstallBepInEx}" />
+                                        <Button Style="{StaticResource BtnDanger}" Content="卸 BepInEx" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.UninstallBepInExCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Binding CanUninstallBepInEx, Converter={StaticResource BoolToVis}}" />
                                     </StackPanel>
                                 </Grid>
                             </Border>

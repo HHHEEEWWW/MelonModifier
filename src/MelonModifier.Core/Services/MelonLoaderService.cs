@@ -16,6 +16,10 @@ public sealed class MelonLoaderService
 {
     private const string RepoApi = "https://api.github.com/repos/LavaGang/MelonLoader/releases/latest";
 
+    // API 限流（匿名 60 次/小时）时的固定版本回退：与 GetLatestReleaseAsync 的动态结果一致。
+    private const string FallbackTag = "v0.7.3";
+    private const string FallbackUrl = "https://github.com/LavaGang/MelonLoader/releases/download/v0.7.3/MelonLoader.x64.zip";
+
     // v0.7.x 的 zip 结构：根目录 version.dll + MelonLoader/ 文件夹（无 dobby.dll）
     private static readonly string[] ProxyFileNames = { "version.dll" };
 
@@ -24,16 +28,8 @@ public sealed class MelonLoaderService
 
     public MelonLoaderService(HttpClient? http = null, string? cacheDir = null)
     {
-        _http = http ?? CreateHttpClient();
+        _http = http ?? HttpClientFactory.Create();
         _cacheDir = cacheDir ?? AppPaths.CacheDir;
-    }
-
-    public static HttpClient CreateHttpClient()
-    {
-        var client = new HttpClient();
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("MelonModifier/0.1");
-        client.Timeout = TimeSpan.FromMinutes(10);
-        return client;
     }
 
     /// <summary>查询 MelonLoader 最新发布。</summary>
@@ -69,9 +65,18 @@ public sealed class MelonLoaderService
 
             return release;
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch
         {
-            return null;
+            // API 不可用（限流/网络）时回退到固定已知版本，保证安装功能可用
+            return new MelonLoaderRelease
+            {
+                Tag = FallbackTag,
+                WindowsX64Url = FallbackUrl,
+            };
         }
     }
 
@@ -182,29 +187,52 @@ public sealed class MelonLoaderService
         Directory.CreateDirectory(_cacheDir);
 
         var zipPath = Path.Combine(_cacheDir, $"MelonLoader_{tag}.x64.zip");
-        if (File.Exists(zipPath) && new FileInfo(zipPath).Length > 1_000_000)
-            return zipPath; // 命中缓存
 
-        using var response = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        var total = response.Content.Headers.ContentLength ?? 0;
+        // 缓存命中：校验 zip 中央目录可读，防止半截文件被误用
+        if (File.Exists(zipPath) && IsValidZip(zipPath))
+            return zipPath;
 
-        await using var src = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        await using var dst = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None, 64 * 1024, useAsync: true);
-        var buffer = new byte[64 * 1024];
-        long written = 0;
-        int read;
-        while ((read = await src.ReadAsync(buffer, ct).ConfigureAwait(false)) > 0)
+        // 下载到 .part，完成后原子改名，避免中断残留
+        var partPath = zipPath + ".part";
+        using (var response = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false))
         {
-            await dst.WriteAsync(buffer.AsMemory(0, read), ct).ConfigureAwait(false);
-            written += read;
-            if (total > 0)
+            response.EnsureSuccessStatusCode();
+            var total = response.Content.Headers.ContentLength ?? 0;
+
+            await using var src = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+            await using var dst = new FileStream(partPath, FileMode.Create, FileAccess.Write, FileShare.None, 64 * 1024, useAsync: true);
+            var buffer = new byte[64 * 1024];
+            long written = 0;
+            int read;
+            while ((read = await src.ReadAsync(buffer, ct).ConfigureAwait(false)) > 0)
             {
-                var pct = (int)(written * 100 / total);
-                System.Diagnostics.Debug.WriteLine($"download {pct}%");
+                await dst.WriteAsync(buffer.AsMemory(0, read), ct).ConfigureAwait(false);
+                written += read;
+                if (total > 0)
+                {
+                    var pct = (int)(written * 100 / total);
+                    System.Diagnostics.Debug.WriteLine($"download {pct}%");
+                }
             }
         }
+
+        if (File.Exists(zipPath))
+            File.Delete(zipPath);
+        File.Move(partPath, zipPath);
         return zipPath;
+    }
+
+    private static bool IsValidZip(string path)
+    {
+        try
+        {
+            using var z = System.IO.Compression.ZipFile.OpenRead(path);
+            return z.Entries.Count > 0;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private async Task ExtractToGameAsync(GameInfo game, string zipPath, IProgress<string>? progress, CancellationToken ct)
