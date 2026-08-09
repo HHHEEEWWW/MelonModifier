@@ -62,11 +62,11 @@
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
                         Visibility="{Binding Games.Count, Converter={StaticResource CountToVis}}">
                 <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="44"
-                           Foreground="{StaticResource Brush.TextDim}" HorizontalAlignment="Center" />
-                <TextBlock Text="尚未发现游戏" FontSize="15" Foreground="{StaticResource Brush.TextSecondary}"
+                           Foreground="{DynamicResource Brush.TextDim}" HorizontalAlignment="Center" />
+                <TextBlock Text="尚未发现游戏" FontSize="15" Foreground="{DynamicResource Brush.TextSecondary}"
                            HorizontalAlignment="Center" Margin="0,10,0,0" />
                 <TextBlock Text="点击「扫描 Steam」自动发现 Unity 游戏，或「添加游戏」手动选择目录"
-                           FontSize="12" Foreground="{StaticResource Brush.TextDim}"
+                           FontSize="12" Foreground="{DynamicResource Brush.TextDim}"
                            HorizontalAlignment="Center" Margin="0,4,0,0" />
             </StackPanel>
 
@@ -93,37 +93,37 @@
                                     <!-- 名称 + 状态徽章 -->
                                     <Grid Grid.Row="0">
                                         <TextBlock Text="{Binding Name}" FontSize="14.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource Brush.TextPrimary}"
+                                                   Foreground="{DynamicResource Brush.TextPrimary}"
                                                    TextTrimming="CharacterEllipsis" Margin="0,0,8,0" />
                                         <Border Style="{StaticResource Badge}" HorizontalAlignment="Right">
                                             <TextBlock Text="{Binding StatusText}"
                                                        FontSize="11" FontWeight="SemiBold"
-                                                       FontFamily="{StaticResource Font.Mono}"
+                                                       FontFamily="{DynamicResource Font.Mono}"
                                                        Foreground="{Binding StatusKind, Converter={StaticResource StatusKindToBrush}}" />
                                         </Border>
                                     </Grid>
 
                                     <!-- 引擎徽章 -->
                                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,0">
-                                        <Border Style="{StaticResource Badge}" Background="#1A2A45">
+                                        <Border Style="{StaticResource Badge}" Background="{DynamicResource Brush.BgActive}">
                                             <TextBlock Text="{Binding EngineLabel}"
                                                        FontSize="11" FontWeight="SemiBold"
-                                                       FontFamily="{StaticResource Font.Mono}"
-                                                       Foreground="{StaticResource Brush.HoloBlue}" />
+                                                       FontFamily="{DynamicResource Font.Mono}"
+                                                       Foreground="{DynamicResource Brush.HoloBlue}" />
                                         </Border>
                                     </StackPanel>
 
                                     <!-- 路径 -->
                                     <TextBlock Grid.Row="2" Margin="0,10,0,0" FontSize="11.5"
-                                               FontFamily="{StaticResource Font.Mono}"
-                                               Foreground="{StaticResource Brush.TextDim}"
+                                               FontFamily="{DynamicResource Font.Mono}"
+                                               Foreground="{DynamicResource Brush.TextDim}"
                                                Text="{Binding Path}" TextTrimming="CharacterEllipsis"
                                                ToolTip="{Binding Path}" />
 
                                     <!-- 版本 -->
                                     <TextBlock Grid.Row="3" Margin="0,6,0,0" FontSize="11.5"
-                                               FontFamily="{StaticResource Font.Mono}"
-                                               Foreground="{StaticResource Brush.TextSecondary}"
+                                               FontFamily="{DynamicResource Font.Mono}"
+                                               Foreground="{DynamicResource Brush.TextSecondary}"
                                                Text="{Binding VersionSummary}" />
 
                                     <!-- 操作按钮 -->
@@ -159,13 +159,13 @@
 
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="已选游戏：" FontSize="12.5" Foreground="{StaticResource Brush.TextDim}"
+                        <TextBlock Text="已选游戏：" FontSize="12.5" Foreground="{DynamicResource Brush.TextDim}"
                                    VerticalAlignment="Center" />
                         <TextBlock Text="{Binding SelectedGame.Name}" FontSize="13.5" FontWeight="SemiBold"
-                                   Foreground="{StaticResource Brush.Neon}" VerticalAlignment="Center" />
+                                   Foreground="{DynamicResource Brush.Neon}" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding SelectedGame.VersionSummary}" FontSize="11.5"
-                                   FontFamily="{StaticResource Font.Mono}"
-                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontFamily="{DynamicResource Font.Mono}"
+                                   Foreground="{DynamicResource Brush.TextSecondary}"
                                    VerticalAlignment="Center" Margin="12,0,0,0" />
                     </StackPanel>
 
@@ -175,13 +175,13 @@
                             <ColumnDefinition Width="220" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding ProgressText}" FontSize="11.5"
-                                   FontFamily="{StaticResource Font.Mono}"
-                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontFamily="{DynamicResource Font.Mono}"
+                                   Foreground="{DynamicResource Brush.TextSecondary}"
                                    TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                         <ProgressBar Grid.Column="1" Height="4" Minimum="0" Maximum="100"
                                      Value="{Binding ProgressValue}"
-                                     Foreground="{StaticResource Brush.Neon}"
-                                     Background="#14202F" BorderThickness="0" />
+                                     Foreground="{DynamicResource Brush.Neon}"
+                                     Background="{DynamicResource Brush.BgActive}" BorderThickness="0" />
                     </Grid>
                 </StackPanel>
 

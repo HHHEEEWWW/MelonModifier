@@ -7,12 +7,18 @@
         MinWidth="960" MinHeight="640"
         WindowStyle="None"
         ResizeMode="CanResize"
-        Background="{StaticResource Brush.WindowBg}"
-        FontFamily="{StaticResource Font.Main}"
+        Background="{DynamicResource Brush.WindowBg}"
+        FontFamily="{DynamicResource Font.Main}"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True">
 
     <Grid>
+        <!-- 全局字号缩放（外观页调节） -->
+        <Grid.LayoutTransform>
+            <ScaleTransform ScaleX="{Binding State.Settings.FontScale}"
+                            ScaleY="{Binding State.Settings.FontScale}" />
+        </Grid.LayoutTransform>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="26" />
@@ -26,7 +32,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- ========== 侧边导航 ========== -->
-            <Border Grid.Column="0" Background="#0C1322" BorderBrush="{StaticResource Brush.BorderLine}"
+            <Border Grid.Column="0" Background="{DynamicResource Brush.BgMid}" BorderBrush="{DynamicResource Brush.BorderLine}"
                     BorderThickness="0,0,1,0">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -39,18 +45,18 @@
                     <StackPanel Grid.Row="0" Margin="20,22,20,26">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontSize="19" FontWeight="Bold"
-                                       Foreground="{StaticResource Brush.Neon}"
-                                       Effect="{StaticResource Fx.GlowNeon}"
+                                       Foreground="{DynamicResource Brush.Neon}"
+                                       Effect="{DynamicResource Fx.GlowNeon}"
                                        Text="MELON" />
                             <TextBlock FontSize="19" FontWeight="Bold"
-                                       Foreground="{StaticResource Brush.TextDim}"
+                                       Foreground="{DynamicResource Brush.TextDim}"
                                        Text=" // " />
                             <TextBlock FontSize="19" FontWeight="Bold"
-                                       Foreground="{StaticResource Brush.HoloBlue}"
+                                       Foreground="{DynamicResource Brush.HoloBlue}"
                                        Text="MODIFIER" />
                         </StackPanel>
-                        <TextBlock Margin="2,5,0,0" FontSize="10.5" FontFamily="{StaticResource Font.Mono}"
-                                   Foreground="{StaticResource Brush.TextDim}"
+                        <TextBlock Margin="2,5,0,0" FontSize="10.5" FontFamily="{DynamicResource Font.Mono}"
+                                   Foreground="{DynamicResource Brush.TextDim}"
                                    Text="UNITY MOD LOADER CONSOLE" />
                     </StackPanel>
 
@@ -69,11 +75,11 @@
 
                     <!-- 底部版本 -->
                     <StackPanel Grid.Row="2" Margin="20,0,20,18">
-                        <TextBlock FontSize="10.5" FontFamily="{StaticResource Font.Mono}"
-                                   Foreground="{StaticResource Brush.TextDim}"
+                        <TextBlock FontSize="10.5" FontFamily="{DynamicResource Font.Mono}"
+                                   Foreground="{DynamicResource Brush.TextDim}"
                                    Text="MelonModifier v0.1.0" />
-                        <TextBlock FontSize="10.5" FontFamily="{StaticResource Font.Mono}"
-                                   Foreground="{StaticResource Brush.TextDim}"
+                        <TextBlock FontSize="10.5" FontFamily="{DynamicResource Font.Mono}"
+                                   Foreground="{DynamicResource Brush.TextDim}"
                                    Text="MelonLoader 管理器 · Windows" />
                     </StackPanel>
                 </Grid>
@@ -89,10 +95,10 @@
                 <!-- 标题栏（发光细线 + 窗口按钮） -->
                 <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                     <Rectangle Height="1" VerticalAlignment="Top"
-                               Fill="{StaticResource Brush.TopLine}" />
+                               Fill="{DynamicResource Brush.TopLine}" />
                     <TextBlock Margin="18,0,0,0" VerticalAlignment="Center"
-                               FontSize="11" FontFamily="{StaticResource Font.Mono}"
-                               Foreground="{StaticResource Brush.TextDim}"
+                               FontSize="11" FontFamily="{DynamicResource Font.Mono}"
+                               Foreground="{DynamicResource Brush.TextDim}"
                                Text="{Binding SelectedPage.Title, StringFormat=// {0}}"
                                TextTrimming="CharacterEllipsis" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -113,14 +119,14 @@
         </Grid>
 
         <!-- ==================== 状态栏 ==================== -->
-        <Border Grid.Row="1" Background="#0A101C" BorderBrush="{StaticResource Brush.BorderLine}"
+        <Border Grid.Row="1" Background="{DynamicResource Brush.BgDeep}" BorderBrush="{DynamicResource Brush.BorderLine}"
                 BorderThickness="0,1,0,0">
             <Grid Margin="12,0">
                 <Ellipse Width="6" Height="6" HorizontalAlignment="Left" VerticalAlignment="Center"
-                         Fill="{StaticResource Brush.Success}" />
+                         Fill="{DynamicResource Brush.Success}" />
                 <TextBlock Margin="16,0,0,0" VerticalAlignment="Center"
-                           FontSize="11" FontFamily="{StaticResource Font.Mono}"
-                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="11" FontFamily="{DynamicResource Font.Mono}"
+                           Foreground="{DynamicResource Brush.TextSecondary}"
                            Text="{Binding State.StatusText, RelativeSource={RelativeSource AncestorType=Window}}"
                            TextTrimming="CharacterEllipsis" />
             </Grid>

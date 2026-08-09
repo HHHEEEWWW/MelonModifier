@@ -73,18 +73,4 @@
     <DropShadowEffect x:Key="Fx.GlowBlue" BlurRadius="12" ShadowDepth="0" Direction="0" Color="#4D9FFF" Opacity="0.4" />
     <DropShadowEffect x:Key="Fx.GlowDanger" BlurRadius="12" ShadowDepth="0" Direction="0" Color="#FF5370" Opacity="0.5" />
     <DropShadowEffect x:Key="Fx.ShadowCard" BlurRadius="18" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.55" />
-
-    <!-- ==================== 字体 ==================== -->
-    <FontFamily x:Key="Font.Main">Segoe UI, Microsoft YaHei UI</FontFamily>
-    <FontFamily x:Key="Font.Mono">Consolas, Cascadia Mono</FontFamily>
-
-    <!-- 顶部标题栏发光细线画刷 -->
-    <LinearGradientBrush x:Key="Brush.TopLine" StartPoint="0,0" EndPoint="1,0">
-        <GradientStop Offset="0" Color="#00FFFFFF" />
-        <GradientStop Offset="0.15" Color="#6600E5FF" />
-        <GradientStop Offset="0.5" Color="#CC00E5FF" />
-        <GradientStop Offset="0.85" Color="#667C4DFF" />
-        <GradientStop Offset="1" Color="#00FFFFFF" />
-    </LinearGradientBrush>
-
 </ResourceDictionary>

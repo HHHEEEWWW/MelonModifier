@@ -28,6 +28,7 @@ public sealed partial class MainViewModel : ObservableObject
             new() { Title = "Mods", Icon = "\uE8D7", View = new Views.ModsView() },
             new() { Title = "日志", Icon = "\uE9D9", View = new Views.LogsView() },
             new() { Title = "配置", Icon = "\uE713", View = new Views.ConfigView() },
+            new() { Title = "外观", Icon = "\uE771", View = new Views.AppearanceView() },
             new() { Title = "关于", Icon = "\uE946", View = new Views.AboutView() },
         };
 

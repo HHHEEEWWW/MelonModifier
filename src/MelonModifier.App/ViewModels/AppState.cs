@@ -17,6 +17,7 @@ public sealed partial class AppState : ObservableObject
     public LogService LogService { get; } = new();
     public ConfigService ConfigService { get; } = new();
     public GameRegistry Registry { get; } = new();
+    public SettingsService SettingsService { get; } = new();
 
     public ObservableCollection<GameInfo> Games { get; } = new();
 

@@ -46,6 +46,24 @@ public sealed class IntToVisibilityConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+/// <summary>bool 取反（参数 true 时不做取反）。</summary>
+public sealed class InverseBoolConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var noInvert = string.Equals(parameter as string, "noinvert", StringComparison.OrdinalIgnoreCase);
+        var b = value is bool v && v;
+        return noInvert ? b : !b;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var noInvert = string.Equals(parameter as string, "noinvert", StringComparison.OrdinalIgnoreCase);
+        var b = value is bool v && v;
+        return noInvert ? b : !b;
+    }
+}
+
 /// <summary>bool -> 画刷（parameter 传资源 Key 列表 "trueKey,falseKey"）。</summary>
 public sealed class BoolToBrushConverter : IValueConverter
 {

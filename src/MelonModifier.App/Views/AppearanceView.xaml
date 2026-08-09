@@ -1,0 +1,186 @@
+<UserControl x:Class="MelonModifier.App.Views.AppearanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:MelonModifier.App.Converters">
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:InverseBoolConverter x:Key="InverseBool" />
+    </UserControl.Resources>
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 标题 -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,14">
+            <TextBlock Style="{StaticResource SectionTitle}" Text="外观" />
+            <TextBlock Style="{StaticResource SubTitle}" Margin="0,3,0,0"
+                       Text="主题、字体与界面缩放（设置自动保存，下次启动生效）" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Style="{StaticResource SciScrollViewer}" VerticalScrollBarVisibility="Auto">
+            <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+
+                <!-- ============ 主题 ============ -->
+                <Border Style="{StaticResource PanelCard}" Padding="18" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionTitle}" FontSize="14" Text="主题" />
+                        <TextBlock Style="{StaticResource SubTitle}" Margin="0,3,0,12"
+                                   Text="夜间模式适合暗光环境，日间模式适合明亮环境" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="theme" Margin="0,0,10,0" Padding="16,10" FontSize="13"
+                                         Content="夜间（暗色）"
+                                         IsChecked="{Binding IsDark, Mode=TwoWay}">
+                                <RadioButton.Style>
+                                    <Style TargetType="RadioButton">
+                                        <Setter Property="Foreground" Value="{DynamicResource Brush.TextPrimary}" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderGlow}" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="RadioButton">
+                                                    <Border x:Name="Bd" CornerRadius="6" Padding="16,10"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#1A00E5FF" />
+                                                            <Setter TargetName="Bd" Property="BorderBrush" Value="#6600E5FF" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource Brush.Neon}" />
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#0FFFFFFF" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </RadioButton.Style>
+                            </RadioButton>
+
+                            <RadioButton GroupName="theme" Padding="16,10" FontSize="13"
+                                         Content="日间（亮色）"
+                                         IsChecked="{Binding IsDark, Mode=TwoWay, Converter={StaticResource InverseBool}}">
+                                <RadioButton.Style>
+                                    <Style TargetType="RadioButton">
+                                        <Setter Property="Foreground" Value="{DynamicResource Brush.TextPrimary}" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderGlow}" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="RadioButton">
+                                                    <Border x:Name="Bd" CornerRadius="6" Padding="16,10"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#1A00E5FF" />
+                                                            <Setter TargetName="Bd" Property="BorderBrush" Value="#6600E5FF" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource Brush.Neon}" />
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#0FFFFFFF" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </RadioButton.Style>
+                            </RadioButton>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============ 字体 ============ -->
+                <Border Style="{StaticResource PanelCard}" Padding="18" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionTitle}" FontSize="14" Text="字体" />
+                        <TextBlock Style="{StaticResource SubTitle}" Margin="0,3,0,12"
+                                   Text="选择界面主字体" />
+
+                        <ComboBox Width="280" HorizontalAlignment="Left"
+                                  ItemsSource="{Binding FontFamilies}"
+                                  SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}"
+                                  Style="{StaticResource SciComboBox}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- ============ 字号（缩放） ============ -->
+                <Border Style="{StaticResource PanelCard}" Padding="18" Margin="0,0,0,12">
+                    <StackPanel>
+                        <Grid>
+                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="14" Text="字号" />
+                            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       FontSize="12" FontFamily="{DynamicResource Font.Mono}"
+                                       Foreground="{DynamicResource Brush.TextSecondary}"
+                                       Text="{Binding FontScale, StringFormat={}{0:0%}}" />
+                        </Grid>
+                        <TextBlock Style="{StaticResource SubTitle}" Margin="0,3,0,10"
+                                   Text="整体界面缩放（85% ~ 130%）" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="小" FontSize="12"
+                                       Foreground="{DynamicResource Brush.TextDim}" VerticalAlignment="Center" />
+                            <Slider Grid.Column="1" Margin="12,0"
+                                    Minimum="0.85" Maximum="1.3" TickFrequency="0.05"
+                                    IsSnapToTickEnabled="True"
+                                    Value="{Binding FontScale, Mode=TwoWay}"
+                                    VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="大" FontSize="12"
+                                       Foreground="{DynamicResource Brush.TextDim}" VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- 预览 -->
+                        <Border Margin="0,14,0,0" Padding="14" CornerRadius="6"
+                                Background="#0AFFFFFF"
+                                BorderBrush="{DynamicResource Brush.BorderGlow}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock FontSize="11" Foreground="{DynamicResource Brush.TextDim}"
+                                           Text="预览" />
+                                <TextBlock Margin="0,6,0,0" FontSize="15"
+                                           Foreground="{DynamicResource Brush.TextPrimary}"
+                                           Text="MelonModifier 科幻界面预览 AaBb 0123456789" />
+                                <TextBlock Margin="0,4,0,0" FontSize="12"
+                                           Foreground="{DynamicResource Brush.TextSecondary}"
+                                           Text="游戏库 · Mods · 日志 · 配置 · 外观" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============ 提示 ============ -->
+                <Border Style="{StaticResource PanelCard}" Padding="18">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="16"
+                                   Foreground="{DynamicResource Brush.HoloBlue}" VerticalAlignment="Center" />
+                        <TextBlock Margin="10,0,0,0" FontSize="12"
+                                   Foreground="{DynamicResource Brush.TextSecondary}"
+                                   TextWrapping="Wrap"
+                                   Text="所有设置保存在 %AppData%\MelonModifier\settings.json，修改即时生效并自动保存。" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

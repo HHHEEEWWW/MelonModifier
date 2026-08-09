@@ -27,7 +27,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="目标游戏" FontSize="12.5" Foreground="{StaticResource Brush.TextDim}"
+                <TextBlock Text="目标游戏" FontSize="12.5" Foreground="{DynamicResource Brush.TextDim}"
                            VerticalAlignment="Center" Margin="0,0,8,0" />
                 <ComboBox Width="240" VerticalContentAlignment="Center"
                           ItemsSource="{Binding Games}"
@@ -62,8 +62,8 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="LOG FILES" FontSize="11" FontWeight="Bold"
-                               FontFamily="{StaticResource Font.Mono}"
-                               Foreground="{StaticResource Brush.TextDim}" Margin="4,0,0,8" />
+                               FontFamily="{DynamicResource Font.Mono}"
+                               Foreground="{DynamicResource Brush.TextDim}" Margin="4,0,0,8" />
                     <ListBox Grid.Row="1" Style="{StaticResource SciListBox}"
                              ItemsSource="{Binding LogFiles}"
                              SelectedItem="{Binding SelectedLog, Mode=TwoWay}" />
@@ -72,11 +72,11 @@
 
             <!-- 内容 -->
             <Border Grid.Column="1" Style="{StaticResource PanelCard}" Padding="0">
-                <TextBox IsReadOnly="True" BorderThickness="0" Background="#0A0F18"
-                         Foreground="#B8C7DD" FontFamily="{StaticResource Font.Mono}" FontSize="11.5"
+                <TextBox IsReadOnly="True" BorderThickness="0" Background="{DynamicResource Brush.BgDeep}"
+                         Foreground="{DynamicResource Brush.TextPrimary}" FontFamily="{DynamicResource Font.Mono}" FontSize="11.5"
                          Text="{Binding LogContent, Mode=OneWay}"
                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                         Padding="12" SelectionBrush="#6600E5FF" CaretBrush="{StaticResource Brush.Neon}" />
+                         Padding="12" SelectionBrush="#6600E5FF" CaretBrush="{DynamicResource Brush.Neon}" />
             </Border>
         </Grid>
 
@@ -84,9 +84,9 @@
         <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
                     Visibility="{Binding HasGame, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
             <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="44"
-                       Foreground="{StaticResource Brush.TextDim}" HorizontalAlignment="Center" />
+                       Foreground="{DynamicResource Brush.TextDim}" HorizontalAlignment="Center" />
             <TextBlock Text="{Binding GameHint}" FontSize="14"
-                       Foreground="{StaticResource Brush.TextSecondary}"
+                       Foreground="{DynamicResource Brush.TextSecondary}"
                        HorizontalAlignment="Center" Margin="0,10,0,0" />
         </StackPanel>
     </Grid>
