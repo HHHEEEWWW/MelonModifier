@@ -18,6 +18,10 @@ public sealed partial class GameLibraryViewModel : ObservableObject
     {
         _state = state;
         Games = state.Games;
+
+        // 启动即显示上次的游戏列表（缓存），随后后台自动扫描刷新
+        LoadCache();
+        _ = AutoScanAsync();
     }
 
     public ObservableCollection<GameInfo> Games { get; }
@@ -49,8 +53,24 @@ public sealed partial class GameLibraryViewModel : ObservableObject
         OnPropertyChanged(nameof(HasSelection));
     }
 
+    /// <summary>启动自动扫描（失败静默，不打扰用户）。</summary>
+    private async Task AutoScanAsync()
+    {
+        try
+        {
+            await Task.Delay(300); // 等 UI 先渲染出缓存列表
+            await ScanCoreAsync(silent: true);
+        }
+        catch
+        {
+            // 启动扫描失败不弹窗，用户可手动点扫描
+        }
+    }
+
     [RelayCommand]
-    private async Task ScanAsync()
+    private Task ScanAsync() => ScanCoreAsync(silent: false);
+
+    private async Task ScanCoreAsync(bool silent)
     {
         if (IsScanning)
             return;
@@ -60,48 +80,79 @@ public sealed partial class GameLibraryViewModel : ObservableObject
         try
         {
             var found = await Task.Run(_state.Scanner.ScanSteamGames);
-
-            // 合并手动添加的游戏
-            foreach (var manual in _state.Registry.Games)
+            await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                var existing = found.Find(g => string.Equals(g.Path, manual.Path, System.StringComparison.OrdinalIgnoreCase));
-                if (existing is null)
-                {
-                    _state.Scanner.Refresh(manual);
-                    found.Add(manual);
-                }
-            }
-
-            Games.Clear();
-            foreach (var g in found)
-                Games.Add(g);
-
-            _state.NotifyStatus($"扫描完成：发现 {Games.Count} 个 Unity 游戏");
-
-            // 后台查询最新版本
-            _ = Task.Run(async () =>
-            {
-                var release = await _state.LoaderService.GetLatestReleaseAsync();
-                if (release is null)
-                    return;
-                await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    foreach (var g in Games)
-                    {
-                        g.LatestVersion = release.VersionLabel;
-                        g.NotifyChanged();
-                    }
-                });
+                MergeGames(found);
+                _state.Registry.SaveAll(Games);
+                if (!silent)
+                    _state.NotifyStatus($"扫描完成：发现 {Games.Count} 个 Unity 游戏");
             });
+
+            await RefreshLatestAsync();
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"扫描失败：{ex.Message}", "MelonModifier", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (!silent)
+                MessageBox.Show($"扫描失败：{ex.Message}", "MelonModifier", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         finally
         {
             IsScanning = false;
         }
+    }
+
+    /// <summary>
+    /// 合并扫描结果与当前列表：
+    /// - 同一路径：保留现有条目（Id/手动标记稳定），用扫描结果刷新状态
+    /// - 扫描不到：保留（手动添加或已卸载的游戏）
+    /// - 新发现的：添加
+    /// </summary>
+    private void MergeGames(List<GameInfo> scanned)
+    {
+        var byPath = new Dictionary<string, GameInfo>(StringComparer.OrdinalIgnoreCase);
+        foreach (var g in Games)
+            byPath[g.Path] = g;
+
+        var merged = new List<GameInfo>();
+        foreach (var s in scanned)
+        {
+            if (byPath.TryGetValue(s.Path, out var existing))
+            {
+                // 复用现有条目，刷新状态
+                existing.Engine = s.Engine;
+                existing.HasMelonLoader = s.HasMelonLoader;
+                existing.InstalledVersion = s.InstalledVersion;
+                byPath.Remove(s.Path);
+                merged.Add(existing);
+            }
+            else
+            {
+                merged.Add(s);
+            }
+        }
+
+        // 扫描不到的保留（手动游戏等），并刷新状态
+        foreach (var rest in byPath.Values)
+        {
+            _state.Scanner.Refresh(rest);
+            merged.Add(rest);
+        }
+
+        merged.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase));
+
+        Games.Clear();
+        foreach (var g in merged)
+            Games.Add(g);
+
+        foreach (var g in Games)
+            g.NotifyChanged();
+    }
+
+    /// <summary>启动时从缓存加载上次的游戏列表。</summary>
+    private void LoadCache()
+    {
+        foreach (var g in _state.Registry.Games)
+            Games.Add(g);
     }
 
     [RelayCommand]
@@ -125,6 +176,7 @@ public sealed partial class GameLibraryViewModel : ObservableObject
         _state.Registry.Add(game);
         if (Games.All(g => !string.Equals(g.Path, game.Path, System.StringComparison.OrdinalIgnoreCase)))
             Games.Add(game);
+        _state.Registry.SaveAll(Games);   // 缓存同步（含 Steam 扫描到的游戏）
         _state.NotifyStatus($"已添加：{game.Name}");
     }
 
@@ -178,6 +230,8 @@ public sealed partial class GameLibraryViewModel : ObservableObject
             ProgressValue = 100;
 
             RefreshGame(game);
+            _state.Registry.SaveAll(Games);
+            _state.RequestRefresh();   // 通知 Mods/日志/配置页刷新（新安装的游戏目录）
             await RefreshLatestAsync();
         }
         catch (Exception ex)
@@ -208,6 +262,7 @@ public sealed partial class GameLibraryViewModel : ObservableObject
         {
             _state.LoaderService.UninstallAsync(game).GetAwaiter().GetResult();
             RefreshGame(game);
+            _state.Registry.SaveAll(Games);
             _state.NotifyStatus($"已卸载：{game.Name}");
         }
         catch (Exception ex)

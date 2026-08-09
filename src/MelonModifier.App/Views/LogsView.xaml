@@ -35,8 +35,15 @@
                           DisplayMemberPath="Name">
                     
                 </ComboBox>
-                <Button Style="{StaticResource BtnGhost}" Content="&#xE72C; 刷新" Margin="8,0,0,0"
-                        Command="{Binding RefreshLogsCommand}" />
+                <Button Style="{StaticResource BtnGhost}" Margin="8,0,0,0"
+                        Command="{Binding RefreshLogsCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                            <TextBlock Text="刷新" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
             </StackPanel>
         </Grid>
 

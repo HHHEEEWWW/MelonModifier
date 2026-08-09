@@ -29,12 +29,30 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Style="{StaticResource BtnGhost}" Content="&#xE71D; 刷新状态"
-                        Margin="0,0,8,0" Command="{Binding RefreshAllCommand}" />
-                <Button Style="{StaticResource BtnGhost}" Content="&#xE896; 添加游戏"
-                        Margin="0,0,8,0" Command="{Binding AddGameCommand}" />
-                <Button Style="{StaticResource BtnPrimary}" Content="&#xE768; 扫描 Steam"
-                        Command="{Binding ScanCommand}" />
+                <Button Style="{StaticResource BtnGhost}" Margin="0,0,8,0" Command="{Binding RefreshAllCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE71D;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                            <TextBlock Text="刷新状态" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Style="{StaticResource BtnGhost}" Margin="0,0,8,0" Command="{Binding AddGameCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                            <TextBlock Text="添加游戏" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Style="{StaticResource BtnPrimary}" Command="{Binding ScanCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                            <TextBlock Text="扫描 Steam" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -168,8 +186,14 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Style="{StaticResource BtnGhost}" Content="&#xE838; 打开目录"
-                            Command="{Binding OpenGameFolderCommand}" CommandParameter="{Binding SelectedGame}" />
+                    <Button Style="{StaticResource BtnGhost}" Command="{Binding OpenGameFolderCommand}" CommandParameter="{Binding SelectedGame}">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE838;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                                <TextBlock Text="打开目录" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>

@@ -8,7 +8,8 @@ using MelonModifier.Core.Models;
 namespace MelonModifier.Core.Services;
 
 /// <summary>
-/// 用户手动添加的游戏列表持久化（Steam 扫描结果是动态的，不持久化）。
+/// 游戏列表持久化：手动添加的游戏 + Steam 扫描结果的缓存。
+/// 缓存用于启动时立即显示上次的游戏列表，随后由后台扫描刷新。
 /// </summary>
 public sealed class GameRegistry
 {
@@ -34,6 +35,13 @@ public sealed class GameRegistry
     public void Remove(string id)
     {
         _games.RemoveAll(g => g.Id == id);
+        Save();
+    }
+
+    /// <summary>以扫描/合并结果整体覆盖缓存（保留手动添加标记）。</summary>
+    public void SaveAll(IEnumerable<GameInfo> games)
+    {
+        _games = games.ToList();
         Save();
     }
 

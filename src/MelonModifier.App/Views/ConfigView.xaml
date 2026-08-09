@@ -35,11 +35,25 @@
                           DisplayMemberPath="Name">
                     
                 </ComboBox>
-                <Button Style="{StaticResource BtnGhost}" Content="&#xE72C; 重新载入" Margin="8,0,0,0"
-                        Command="{Binding ReloadConfigCommand}" />
-                <Button Style="{StaticResource BtnPrimary}" Content="&#xE74E; 保存" Margin="8,0,0,0"
+                <Button Style="{StaticResource BtnGhost}" Margin="8,0,0,0"
+                        Command="{Binding ReloadConfigCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                            <TextBlock Text="重新载入" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Style="{StaticResource BtnPrimary}" Margin="8,0,0,0"
                         Command="{Binding SaveConfigCommand}"
-                        IsEnabled="{Binding IsDirty}" />
+                        IsEnabled="{Binding IsDirty}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                            <TextBlock Text="保存" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -61,9 +75,16 @@
                         <TextBlock Text="KEY / VALUE" FontSize="11" FontWeight="Bold"
                                    FontFamily="{StaticResource Font.Mono}"
                                    Foreground="{StaticResource Brush.TextDim}" />
-                        <Button Style="{StaticResource BtnIcon}" Content="&#xE8B7; 打开文件"
+                        <Button Style="{StaticResource BtnIcon}"
                                 HorizontalAlignment="Right" Padding="8,3" FontSize="11"
-                                Command="{Binding OpenConfigFileCommand}" />
+                                Command="{Binding OpenConfigFileCommand}">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="11" VerticalAlignment="Center" />
+                                    <TextBlock Text="打开文件" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
                     </Grid>
                     <ScrollViewer Grid.Row="1" Style="{StaticResource SciScrollViewer}"
                                   VerticalScrollBarVisibility="Auto">

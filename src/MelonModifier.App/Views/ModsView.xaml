@@ -68,9 +68,15 @@
                                            Foreground="{StaticResource Brush.TextSecondary}" />
                             </Border>
                         </StackPanel>
-                        <Button Style="{StaticResource BtnIcon}" Content="&#xE8B7; 打开文件夹"
-                                HorizontalAlignment="Right" Padding="8,4"
-                                Command="{Binding OpenModsFolderCommand}" />
+                                                <Button Style="{StaticResource BtnIcon}" HorizontalAlignment="Right" Padding="8,4"
+                                Command="{Binding OpenModsFolderCommand}">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                                    <TextBlock Text="打开文件夹" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
                     </Grid>
 
                     <ScrollViewer Grid.Row="1" Style="{StaticResource SciScrollViewer}"
@@ -106,13 +112,22 @@
 
                                         <CheckBox Grid.Column="2" Style="{StaticResource SciToggle}"
                                                   IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+                                                  AutomationProperties.Name="{Binding Name, StringFormat=启用 {0}}"
                                                   Command="{Binding DataContext.ToggleModCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                   CommandParameter="{Binding}"
                                                   VerticalAlignment="Center" Margin="10,0" />
-                                        <Button Grid.Column="3" Style="{StaticResource BtnIcon}" Content="&#xE74D;"
-                                                Command="{Binding DataContext.DeleteModCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                VerticalAlignment="Center" ToolTip="删除" />
+                                        <Button Grid.Column="3" Style="{StaticResource BtnIcon}" Margin="6,0,0,0"
+                                        VerticalAlignment="Center" ToolTip="删除"
+                                        AutomationProperties.Name="{Binding Name, StringFormat=删除 {0}}"
+                                        Command="{Binding DataContext.DeleteModCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="11" VerticalAlignment="Center" />
+                                            <TextBlock Text="删除" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -140,9 +155,15 @@
                                            Foreground="{StaticResource Brush.TextSecondary}" />
                             </Border>
                         </StackPanel>
-                        <Button Style="{StaticResource BtnIcon}" Content="&#xE8B7; 打开文件夹"
-                                HorizontalAlignment="Right" Padding="8,4"
-                                Command="{Binding OpenPluginsFolderCommand}" />
+                                                <Button Style="{StaticResource BtnIcon}" HorizontalAlignment="Right" Padding="8,4"
+                                Command="{Binding OpenPluginsFolderCommand}">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" />
+                                    <TextBlock Text="打开文件夹" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
                     </Grid>
 
                     <ScrollViewer Grid.Row="1" Style="{StaticResource SciScrollViewer}"
@@ -178,13 +199,22 @@
 
                                         <CheckBox Grid.Column="2" Style="{StaticResource SciToggle}"
                                                   IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+                                                  AutomationProperties.Name="{Binding Name, StringFormat=启用 {0}}"
                                                   Command="{Binding DataContext.ToggleModCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                   CommandParameter="{Binding}"
                                                   VerticalAlignment="Center" Margin="10,0" />
-                                        <Button Grid.Column="3" Style="{StaticResource BtnIcon}" Content="&#xE74D;"
-                                                Command="{Binding DataContext.DeleteModCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                VerticalAlignment="Center" ToolTip="删除" />
+                                        <Button Grid.Column="3" Style="{StaticResource BtnIcon}" Margin="6,0,0,0"
+                                        VerticalAlignment="Center" ToolTip="删除"
+                                        AutomationProperties.Name="{Binding Name, StringFormat=删除 {0}}"
+                                        Command="{Binding DataContext.DeleteModCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="11" VerticalAlignment="Center" />
+                                            <TextBlock Text="删除" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

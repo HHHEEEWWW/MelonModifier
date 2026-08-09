@@ -48,10 +48,39 @@ public sealed class GameInfo : INotifyPropertyChanged
     /// <summary>当前最新版本（获取过最新版本信息后才有值）。</summary>
     public string? LatestVersion { get; set; }
 
-    /// <summary>已安装版本是否落后于最新版本。</summary>
-    public bool IsOutdated => HasMelonLoader && LatestVersion is not null
+    /// <summary>已安装版本是否落后于最新版本（语义化比较：0.7.3.0 与 v0.7.3 视为相同）。</summary>
+    public bool IsOutdated => HasMelonLoader
+        && LatestVersion is not null
         && InstalledVersion is not null
-        && !string.Equals(InstalledVersion.TrimStart('v'), LatestVersion.TrimStart('v'), StringComparison.OrdinalIgnoreCase);
+        && CompareVersions(InstalledVersion, LatestVersion) < 0;
+
+    /// <summary>语义化版本比较：去 v 前缀、按 '.' 分段数值比较，缺失段视为 0。</summary>
+    private static int CompareVersions(string? a, string? b)
+    {
+        static List<int> Parts(string? v)
+        {
+            var list = new List<int>();
+            if (string.IsNullOrWhiteSpace(v))
+                return list;
+            foreach (var p in v.TrimStart('v', 'V').Split('.'))
+            {
+                if (int.TryParse(p, out var n))
+                    list.Add(n);
+            }
+            return list;
+        }
+
+        var pa = Parts(a);
+        var pb = Parts(b);
+        for (var i = 0; i < Math.Max(pa.Count, pb.Count); i++)
+        {
+            var x = i < pa.Count ? pa[i] : 0;
+            var y = i < pb.Count ? pb[i] : 0;
+            if (x != y)
+                return x.CompareTo(y);
+        }
+        return 0;
+    }
 
     /// <summary>是否安装了 .NET 6 Desktop Runtime（Il2Cpp 游戏安装 MelonLoader 的前提）。</summary>
     public bool HasDotNet6 { get; set; } = true;
@@ -78,10 +107,10 @@ public sealed class GameInfo : INotifyPropertyChanged
     /// <summary>MelonLoader 状态徽章文本。</summary>
     public string StatusText => !HasMelonLoader ? "未安装" : IsOutdated ? "可升级" : "已安装";
 
-    /// <summary>版本摘要（已装 / 最新）。</summary>
+    /// <summary>版本摘要（已装 / 最新；相同时只显示已装版本）。</summary>
     public string VersionSummary => InstalledVersion is null
         ? (LatestVersion is null ? "未安装" : $"最新 {LatestVersion}")
-        : (LatestVersion is null ? $"已装 {InstalledVersion}" : $"{InstalledVersion} → {LatestVersion}");
+        : (LatestVersion is null ? $"已装 {InstalledVersion}" : IsOutdated ? $"{InstalledVersion} → {LatestVersion}" : $"已装 {InstalledVersion}");
 
     /// <summary>状态等级：0=未安装，1=已安装，2=可升级（UI 徽章颜色用）。</summary>
     public int StatusKind => !HasMelonLoader ? 0 : IsOutdated ? 2 : 1;
