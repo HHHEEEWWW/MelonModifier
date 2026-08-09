@@ -294,8 +294,9 @@ public sealed class BepInExService
                 if (sub == "BepInEx")
                 {
                     // 框架目录整体替换（保留用户数据目录：plugins/config，避免重装丢 Mod）。
-                    // 用拷贝而非 Move：跨卷（游戏盘 ≠ %TEMP% 盘）安全；失败时整体回滚。
+                    // 用拷贝而非 Move：跨卷（游戏盘 ≠ %TEMP% 盘）安全；失败时保留备份供用户找回。
                     var keepDirs = new List<(string Name, string Temp)>();
+                    var keepRestored = false;
                     try
                     {
                         if (Directory.Exists(dstDir))
@@ -320,17 +321,25 @@ public sealed class BepInExService
                         {
                             CopyDirectory(temp, Path.Combine(dstDir, name));
                         }
+                        keepRestored = true;
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        var backupHint = keepDirs.Count > 0
+                            ? $" 用户数据备份位于：{keepDirs[0].Temp}（可手动恢复）"
+                            : "";
                         throw new InvalidOperationException(
-                            "替换 BepInEx 框架失败，游戏目录可能处于中间状态，请重试或手动检查 BepInEx/ 目录。");
+                            $"替换 BepInEx 框架失败，游戏目录可能处于中间状态，请重试。{backupHint}", ex);
                     }
                     finally
                     {
-                        foreach (var (_, temp) in keepDirs)
+                        // 仅恢复成功后清理备份；失败时保留（路径已在异常消息中告知）
+                        if (keepRestored)
                         {
-                            try { Directory.Delete(temp, true); } catch { /* 忽略 */ }
+                            foreach (var (_, temp) in keepDirs)
+                            {
+                                try { Directory.Delete(temp, true); } catch { /* 忽略 */ }
+                            }
                         }
                     }
                 }
