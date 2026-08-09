@@ -115,7 +115,8 @@ public sealed class BepInExService
     {
         EnsureGameClosed(game.Path);
 
-        // 先按清单删除额外部署的文件（Il2Cpp 包的 dotnet/ BCL），保留游戏自有文件
+        // 先按清单删除额外部署的文件（Il2Cpp 包的 dotnet/ BCL），保留游戏自有文件；
+        // 单文件失败（占用/损坏）不中断整体卸载，降级为跳过
         var marker = Path.Combine(game.Path, DeployMarkerFile);
         if (File.Exists(marker))
         {
@@ -123,17 +124,24 @@ public sealed class BepInExService
             foreach (var line in lines)
             {
                 var rel = line.Trim();
-                if (rel.Length == 0)
+                // 路径防御：仅接受相对路径且不含 .. 穿越
+                if (rel.Length == 0 || rel.StartsWith('/') || rel.StartsWith('\\')
+                    || rel.Contains("..") || Path.IsPathRooted(rel))
                     continue;
                 var p = Path.Combine(game.Path, rel);
-                if (File.Exists(p))
-                    File.Delete(p);
+                try
+                {
+                    if (File.Exists(p))
+                        File.Delete(p);
+                }
+                catch (IOException) { /* 文件被占用，跳过 */ }
+                catch (UnauthorizedAccessException) { /* 权限不足，跳过 */ }
             }
             // 清理清单涉及的目录（仅删除因此变空的目录，非空时忽略）
             foreach (var line in lines)
             {
                 var dirRel = Path.GetDirectoryName(line);
-                if (string.IsNullOrEmpty(dirRel))
+                if (string.IsNullOrEmpty(dirRel) || dirRel.Contains("..") || Path.IsPathRooted(dirRel))
                     continue;
                 try
                 {
@@ -229,9 +237,13 @@ public sealed class BepInExService
             }
         }
 
-        if (File.Exists(zipPath))
-            File.Delete(zipPath);
-        File.Move(partPath, zipPath);
+        // 校验下载完整性后再改名进缓存（200 响应可能是错误页/损坏包）
+        if (!IsValidZip(partPath))
+        {
+            try { File.Delete(partPath); } catch { /* 忽略 */ }
+            throw new InvalidOperationException("下载的文件不完整或损坏，请重试。");
+        }
+        File.Move(partPath, zipPath, overwrite: true);
         return zipPath;
     }
 
@@ -273,10 +285,30 @@ public sealed class BepInExService
                 var dstDir = Path.Combine(game.Path, sub);
                 if (sub == "BepInEx")
                 {
-                    // 框架目录整体替换，避免旧版本残留
+                    // 框架目录整体替换（保留用户数据目录：plugins/config，避免重装丢 Mod）
+                    var keepDirs = new List<(string Name, string Temp)>();
                     if (Directory.Exists(dstDir))
+                    {
+                        foreach (var keep in new[] { "plugins", "config" })
+                        {
+                            var keepSrc = Path.Combine(dstDir, keep);
+                            if (Directory.Exists(keepSrc))
+                            {
+                                var tempKeep = Path.Combine(Path.GetTempPath(), "MelonModifier",
+                                    Guid.NewGuid().ToString("N"));
+                                Directory.Move(keepSrc, tempKeep);
+                                keepDirs.Add((keep, tempKeep));
+                            }
+                        }
                         Directory.Delete(dstDir, true);
+                    }
                     CopyDirectory(srcDir, dstDir);
+                    // 恢复用户数据目录（合并进新框架目录）
+                    foreach (var (name, temp) in keepDirs)
+                    {
+                        CopyDirectory(temp, Path.Combine(dstDir, name));
+                        try { Directory.Delete(temp, true); } catch { /* 忽略 */ }
+                    }
                 }
                 else
                 {

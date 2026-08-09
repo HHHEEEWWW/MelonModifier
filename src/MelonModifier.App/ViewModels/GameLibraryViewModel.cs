@@ -247,9 +247,9 @@ public sealed partial class GameLibraryViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Uninstall(GameInfo? game)
+    private async Task UninstallAsync(GameInfo? game)
     {
-        if (game is null)
+        if (game is null || IsInstalling)
             return;
 
         var r = MessageBox.Show(
@@ -258,16 +258,27 @@ public sealed partial class GameLibraryViewModel : ObservableObject
         if (r != MessageBoxResult.Yes)
             return;
 
+        IsInstalling = true;
+        ShowProgress = true;
+        ProgressValue = 0;
+        ProgressText = "正在卸载 MelonLoader ...";
         try
         {
-            _state.LoaderService.UninstallAsync(game).GetAwaiter().GetResult();
+            await Task.Run(() => _state.LoaderService.UninstallAsync(game));
             RefreshGame(game);
             _state.Registry.SaveAll(Games);
             _state.NotifyStatus($"已卸载：{game.Name}");
+            ProgressText = "卸载完成";
+            ProgressValue = 100;
         }
         catch (Exception ex)
         {
             MessageBox.Show($"卸载失败：{ex.Message}", "MelonModifier", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsInstalling = false;
+            ShowProgress = false;
         }
     }
 
